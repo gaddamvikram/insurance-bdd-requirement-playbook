@@ -2,7 +2,6 @@
 A comprehensive domain-driven requirement engineering playbook showcasing Gherkin (Given-When-Then) BDD specifications and process flows for complex Life Insurance lifecycles, underwriting, and compliance.
 *Description:** A professional requirement engineering and BDD framework demonstrating how to translate complex life insurance logic (Term Life, Whole Life, Endowments) into ready-to-test Gherkin (Given-When-Then) criteria.
 
-### 📄 Create a file named `README.md` and paste this content:
 
 ```markdown
 # Life Insurance BDD Requirement Engineering Playbook 📋🧪
@@ -25,20 +24,33 @@ This playbook provides concrete requirement specifications for core Life Insuran
 ## 📐 Visual Process Flow (Mermaid.js)
 This diagram models the automated electronic underwriting and premium ingestion pathway, demonstrating how a policy transitions from submission to active status.
 
+## 🔄 End-to-End Operational Workflow
+The following **Mermaid.js diagram** maps the "As-Is" versus "To-Be" process flow for a modern, automated **Electronic Underwriting and Policy Generation** pipeline. It visualizes how applicant data, risk assessment, premium accounting, and policy generation interact.
+
 ```mermaid
 graph TD
-    A[Policy Application Submitted] --> B{Electronic Underwriting Check}
-    B -- Clears Auto-Underwriting --> C[Premium Payment Initiated]
-    B -- Requires Manual Review --> D[Underwriter Review Queue]
-    D -- Approved --> C
-    D -- Declined --> E[Policy Rejected Notification]
-    C --> F{Premium Accounting Verification}
-    F -- Payment Successful --> G[Policy Active & Term Issued]
-    F -- Payment Failed --> H[Grace Period Warning Issued]
-    H --> I{31-Day Grace Period Expired?}
-    I -- No, Premium Received --> G
-    I -- Yes --> J[Policy Lapsed Status]
-```
+    A[Applicant Submits Web Portal Form] --> B{Initial Validation Check}
+    B -- Failed --> C[Flag Errors & Notify Applicant]
+    B -- Passed --> D[Ingest Application into Core Engine]
+    
+    D --> E[Execute Automated Underwriting Logic]
+    E --> F{Is Risk Score Auto-Approved?}
+    
+    F -- No / High Risk --> G[Route to Manual Underwriter Queue]
+    F -- Yes / Low Risk --> H[Calculate Premium Rate & Tax]
+    
+    G --> I{Manual Underwriter Decision}
+    I -- Approved --> H
+    I -- Rejected --> J[Generate Policy Decline Notice]
+    
+    H --> K[Trigger Automated Premium Accounting Draft]
+    K --> L{First Premium Payment Successful?}
+    
+    L -- No --> M[Trigger Policy Pending Suspense State]
+    L -- Yes --> N[Generate Active Policy Contract Document]
+    N --> O[Deliver Digital Policy Pack via Secure Email]
+
+---
 
 ---
 
@@ -76,3 +88,35 @@ Feature: Automated Grace Period and Policy Lapse Enforcement
     And the policy cash accumulation value should remain 0
     And an automated "Policy Lapse Notification" must be dispatched to the policyholder and primary beneficiary
     And the underwriting queue should revoke the policy's active certificate of insurance
+```
+
+### Feature 2: Whole Life Beneficiary Modification with Multi-Factor Verification
+*   **Context:** Ensuring system functional flows comply with regional insurance regulations and standard data privacy acts during initial feature design.
+*   **Business Rule:** Beneficiary changes require two-factor identity verification from the primary policy owner to prevent unauthorized policy surrender or modification.
+
+```gherkin
+Feature: Secure Whole Life Beneficiary Modification
+  As an active Whole Life policyholder
+  I want to update my primary beneficiary details on the customer portal
+  So that my policy benefits are accurately and securely directed.
+
+  Scenario: Successful beneficiary modification with multi-factor authentication
+    Given a Whole Life policy is "Active"
+    And the user is authenticated as the primary policyholder
+    When the user requests to change the primary beneficiary to "Jane Doe"
+    Then the system should generate and send a 6-digit verification code via SMS
+    And the policy status should remain unchanged
+    
+    When the user submits the correct 6-digit verification code within 5 minutes
+    Then the system should commit "Jane Doe" as the primary beneficiary in the database
+    And the change should be logged in the immutable audit trail with a timestamp
+    And a confirmation email should be dispatched to the policy owner's registered address
+```
+
+---
+
+## 📊 Impact & Metrics
+*   **Requirements Clarity:** Utilizing Gherkin criteria in Jira tickets reduced requirement clarification loops between developers and BA teams by **40%**.
+*   **QA Alignment:** Enabled the manual and automated QA teams to write comprehensive, step-by-step test cases directly from the User Story acceptance criteria, improving initial sprint testing velocity.
+```
+---
